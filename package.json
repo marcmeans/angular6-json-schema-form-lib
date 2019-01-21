@@ -1,39 +1,52 @@
 {
-    "name": "angular6-json-schema-form",
-    "version": "7.0.2",
-    "description": "Angular JSON Schema Form builder",
-    "author": "https://github.com/hamzahamidi/Angular6-json-schema-form/graphs/contributors",
-    "keywords": [
-        "Angular",
-        "ng",
-        "Angular6",
-        "Angular 6",
-        "ng6",
-        "Angular7",
-        "Angular 7",
-        "ng7",
-        "JSON Schema",
-        "form",
-        "forms",
-        "form builder"
-    ],
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/hamzahamidi/angular6-json-schema-form"
-    },
-    "bugs": {
-        "url": "https://github.com/hamzahamidi/angular6-json-schema-form/issues"
-    },
-    "private": false,
-    "peerDependencies": {
-        "@angular/common": ">=6.0.0",
-        "@angular/core": ">=6.0.0",
-        "@angular/forms": ">=6.0.0",
-        "@angular/platform-browser": ">=6.0.0",
-        "@angular/flex-layout": ">=6.0.0-beta.16",
-        "rxjs": ">=6.0.0",
-        "ajv": "^6.0.1",
-        "lodash": "^4.17.4"
-    }
+  "name": "angular6-json-schema-form",
+  "version": "7.0.2",
+  "description": "Angular JSON Schema Form builder",
+  "author": "https://github.com/hamzahamidi/Angular6-json-schema-form/graphs/contributors",
+  "keywords": [
+    "Angular",
+    "ng",
+    "Angular6",
+    "Angular 6",
+    "ng6",
+    "Angular7",
+    "Angular 7",
+    "ng7",
+    "JSON Schema",
+    "form",
+    "forms",
+    "form builder"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamzahamidi/angular6-json-schema-form"
+  },
+  "bugs": {
+    "url": "https://github.com/hamzahamidi/angular6-json-schema-form/issues"
+  },
+  "private": false,
+  "peerDependencies": {
+    "@angular/common": ">=6.0.0",
+    "@angular/core": ">=6.0.0",
+    "@angular/forms": ">=6.0.0",
+    "@angular/platform-browser": ">=6.0.0",
+    "@angular/flex-layout": ">=6.0.0-beta.16",
+    "rxjs": ">=6.0.0",
+    "ajv": "^6.0.1",
+    "lodash": "^4.17.4"
+  },
+  "main": "bundles/angular6-json-schema-form.umd.js",
+  "module": "fesm5/angular6-json-schema-form.js",
+  "es2015": "fesm2015/angular6-json-schema-form.js",
+  "esm5": "esm5/angular6-json-schema-form.js",
+  "esm2015": "esm2015/angular6-json-schema-form.js",
+  "fesm5": "fesm5/angular6-json-schema-form.js",
+  "fesm2015": "fesm2015/angular6-json-schema-form.js",
+  "typings": "angular6-json-schema-form.d.ts",
+  "metadata": "angular6-json-schema-form.metadata.json",
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.9.0"
+  }
 }
