@@ -32,7 +32,7 @@ import { map } from 'rxjs/operators';
  * with the following validators and transformation functions:
  *
  * Validators:
- *   For all formControls:     required (*), type, enum, const
+ *   For all formControls:     required (*), type, enum, const, customError
  *   For text formControls:    minLength (*), maxLength (*), pattern (*), format
  *   For numeric formControls: maximum, exclusiveMaximum,
  *                             minimum, exclusiveMinimum, multipleOf
@@ -635,6 +635,26 @@ export class JsonValidators {
                 null : { 'uniqueItems': { duplicateItems } };
         };
     }
+    /**
+     * 'customError' validator
+     *
+     * Shows a custom message if a message passed in.
+     *
+     * // {string} errorMessage - custom error message
+     * // {boolean = false} invert - instead return error object only if valid
+     * // {IValidatorFn}
+     */
+    static customError (errorMessage = null) {
+        var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+        if (message === null) {
+            return JsonValidators.nullValidator;
+        }
+        return (control, invert = false) => {
+            const isValid = false;
+            return xor(isValid, invert) ?
+                null : { 'customError': { message } };
+        };
+    };
     /**
      * 'contains' validator
      *

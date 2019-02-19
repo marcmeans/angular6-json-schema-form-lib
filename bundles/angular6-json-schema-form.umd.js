@@ -2696,6 +2696,7 @@
                                     return { value: { allOf: __spread(schemas) } };
                                 }
                                 break;
+                            case 'customError':
                             case '$schema':
                             case '$id':
                             case 'id':
@@ -4410,6 +4411,27 @@
             };
         };
         /**
+         * 'customError' validator
+         *
+         * Shows a custom message if a message passed in.
+         *
+         * // {string} errorMessage - custom error message
+         * // {boolean = false} invert - instead return error object only if valid
+         * // {IValidatorFn}
+         */
+        JsonValidators.customError = function (errorMessage) {
+            var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+            if (message === null) {
+                return JsonValidators.nullValidator;
+            }
+            return function (control, invert) {
+                if (invert === void 0) { invert = false; }
+                var isValid = false;
+                return xor(isValid, invert) ?
+                    null : { 'customError': { errorMessage: message } };
+            };
+        };
+        /**
          * 'contains' validator
          *
          * TODO: Complete this validator
@@ -5196,7 +5218,8 @@
                                                                                         code === '400' ? 'minItems' :
                                                                                             code === '401' ? 'maxItems' :
                                                                                                 code === '402' ? 'uniqueItems' :
-                                                                                                    code === '500' ? 'format' : code + '';
+                                                                                                    code === '403' ? 'customError' :
+                                                                                                        code === '500' ? 'format' : code + '';
                                 newNode.options.validationMessages[newKey] = newNode.options.validationMessage[key];
                             });
                         }
@@ -6294,6 +6317,7 @@
         minItems: 'Must have {{minimumItems}} or more items (current items: {{currentItems}})',
         maxItems: 'Must have {{maximumItems}} or fewer items (current items: {{currentItems}})',
         uniqueItems: 'All items must be unique',
+        customError: '{{errorMessage}}',
     };
 
     var frValidationMessages = {
@@ -6353,6 +6377,7 @@
         minItems: 'Doit comporter au minimum {{minimumItems}} éléments',
         maxItems: 'Doit comporter au maximum {{minimumItems}} éléments',
         uniqueItems: 'Tous les éléments doivent être uniques',
+        customError: '{{errorMessage}}',
     };
 
     var zhValidationMessages = {
@@ -6412,6 +6437,7 @@
         minItems: '项目数必须大于或者等于 {{minimumItems}} (当前项目数: {{currentItems}})',
         maxItems: '项目数必须小于或者等于 {{maximumItems}} (当前项目数: {{currentItems}})',
         uniqueItems: '所有项目必须是唯一的',
+        customError: '{{errorMessage}}',
     };
 
     var JsonSchemaFormService = /** @class */ (function () {
@@ -7384,7 +7410,7 @@
                         var arrayKeys = ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems', 'contains'];
                         var numberKeys = ['multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'];
                         var objectKeys = ['maxProperties', 'minProperties', 'required', 'additionalProperties',
-                            'properties', 'patternProperties', 'dependencies', 'propertyNames'];
+                            'properties', 'patternProperties', 'dependencies', 'propertyNames', 'customError'];
                         var stringKeys = ['maxLength', 'minLength', 'pattern', 'format'];
                         var filterKeys_1 = {
                             'array': __spread(numberKeys, objectKeys, stringKeys),

@@ -337,6 +337,16 @@ export declare class JsonValidators {
      */
     static uniqueItems(unique?: boolean): IValidatorFn;
     /**
+     * 'customError' validator
+     *
+     * Shows a custom message if a message passed in.
+     *
+     * // {string} errorMessage - custom error message
+     * // {boolean = false} invert - instead return error object only if valid
+     * // {IValidatorFn}
+     */
+    static customError(errorMessage: string): IValidatorFn;
+    /**
      * 'contains' validator
      *
      * TODO: Complete this validator

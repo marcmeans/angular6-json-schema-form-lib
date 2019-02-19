@@ -85,7 +85,8 @@ export function buildLayout(jsf, widgetLibrary) {
                                                                                     code === '400' ? 'minItems' :
                                                                                         code === '401' ? 'maxItems' :
                                                                                             code === '402' ? 'uniqueItems' :
-                                                                                                code === '500' ? 'format' : code + '';
+                                                                                                code === '403' ? 'customError' :
+                                                                                                    code === '500' ? 'format' : code + '';
                             newNode.options.validationMessages[newKey] = newNode.options.validationMessage[key];
                         });
                     }

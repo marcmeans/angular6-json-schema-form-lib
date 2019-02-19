@@ -2125,6 +2125,7 @@ function mergeSchemas(...schemas) {
                             return { allOf: [...schemas] };
                         }
                         break;
+                    case 'customError':
                     case '$schema':
                     case '$id':
                     case 'id':
@@ -3627,6 +3628,26 @@ class JsonValidators {
         };
     }
     /**
+     * 'customError' validator
+     *
+     * Shows a custom message if a message passed in.
+     *
+     * // {string} errorMessage - custom error message
+     * // {boolean = false} invert - instead return error object only if valid
+     * // {IValidatorFn}
+     */
+    static customError (errorMessage = null) {
+        var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+        if (message === null) {
+            return JsonValidators.nullValidator;
+        }
+        return (control, invert = false) => {
+            const isValid = false;
+            return xor(isValid, invert) ?
+                null : { 'customError': { message } };
+        };
+    };
+    /**
      * 'contains' validator
      *
      * TODO: Complete this validator
@@ -4342,7 +4363,8 @@ function buildLayout(jsf, widgetLibrary) {
                                                                                     code === '400' ? 'minItems' :
                                                                                         code === '401' ? 'maxItems' :
                                                                                             code === '402' ? 'uniqueItems' :
-                                                                                                code === '500' ? 'format' : code + '';
+                                                                                                code === '403' ? 'customError' :
+                                                                                                    code === '500' ? 'format' : code + '';
                             newNode.options.validationMessages[newKey] = newNode.options.validationMessage[key];
                         });
                     }
@@ -5313,6 +5335,7 @@ const enValidationMessages = {
     minItems: 'Must have {{minimumItems}} or more items (current items: {{currentItems}})',
     maxItems: 'Must have {{maximumItems}} or fewer items (current items: {{currentItems}})',
     uniqueItems: 'All items must be unique',
+    customError: '{{errorMessage}}',
 };
 
 const frValidationMessages = {
@@ -5372,6 +5395,7 @@ const frValidationMessages = {
     minItems: 'Doit comporter au minimum {{minimumItems}} éléments',
     maxItems: 'Doit comporter au maximum {{minimumItems}} éléments',
     uniqueItems: 'Tous les éléments doivent être uniques',
+    customError: '{{errorMessage}}',
 };
 
 const zhValidationMessages = {
@@ -5431,6 +5455,7 @@ const zhValidationMessages = {
     minItems: '项目数必须大于或者等于 {{minimumItems}} (当前项目数: {{currentItems}})',
     maxItems: '项目数必须小于或者等于 {{maximumItems}} (当前项目数: {{currentItems}})',
     uniqueItems: '所有项目必须是唯一的',
+    customError: '{{errorMessage}}',
 };
 
 let JsonSchemaFormService = class JsonSchemaFormService {
@@ -6261,7 +6286,7 @@ function convertSchemaToDraft6(schema, options = {}) {
                     const arrayKeys = ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems', 'contains'];
                     const numberKeys = ['multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'];
                     const objectKeys = ['maxProperties', 'minProperties', 'required', 'additionalProperties',
-                        'properties', 'patternProperties', 'dependencies', 'propertyNames'];
+                        'properties', 'patternProperties', 'dependencies', 'propertyNames', 'customError'];
                     const stringKeys = ['maxLength', 'minLength', 'pattern', 'format'];
                     const filterKeys = {
                         'array': [...numberKeys, ...objectKeys, ...stringKeys],

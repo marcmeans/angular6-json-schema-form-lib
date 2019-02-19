@@ -305,6 +305,7 @@ export function mergeSchemas(...schemas) {
                             return { allOf: [...schemas] };
                         }
                         break;
+                    case 'customError':
                     case '$schema':
                     case '$id':
                     case 'id':
