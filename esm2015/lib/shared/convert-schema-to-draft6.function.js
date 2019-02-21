@@ -240,8 +240,9 @@ export function convertSchemaToDraft6(schema, options = {}) {
                     const arrayKeys = ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems', 'contains'];
                     const numberKeys = ['multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'];
                     const objectKeys = ['maxProperties', 'minProperties', 'required', 'additionalProperties',
-                        'properties', 'patternProperties', 'dependencies', 'propertyNames', 'customError'];
-                    const stringKeys = ['maxLength', 'minLength', 'pattern', 'format'];
+                        'properties', 'patternProperties', 'dependencies', 'propertyNames'];
+                    const stringKeys = ['maxLength', 'minLength', 'pattern', 'format',
+                        'customError'];
                     const filterKeys = {
                         'array': [...numberKeys, ...objectKeys, ...stringKeys],
                         'integer': [...arrayKeys, ...objectKeys, ...stringKeys],

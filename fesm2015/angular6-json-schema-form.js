@@ -3633,18 +3633,17 @@ class JsonValidators {
      * Shows a custom message if a message passed in.
      *
      * // {string} errorMessage - custom error message
-     * // {boolean = false} invert - instead return error object only if valid
      * // {IValidatorFn}
      */
     static customError (errorMessage = null) {
-        var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
-        if (message === null) {
+        errorMessage = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+        if (errorMessage === null) {
             return JsonValidators.nullValidator;
         }
-        return (control, invert = false) => {
+        return (invert = false) => {
             const isValid = false;
             return xor(isValid, invert) ?
-                null : { 'customError': { message } };
+                null : { 'customError': { errorMessage } };
         };
     };
     /**
@@ -6286,8 +6285,8 @@ function convertSchemaToDraft6(schema, options = {}) {
                     const arrayKeys = ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems', 'contains'];
                     const numberKeys = ['multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'];
                     const objectKeys = ['maxProperties', 'minProperties', 'required', 'additionalProperties',
-                        'properties', 'patternProperties', 'dependencies', 'propertyNames', 'customError'];
-                    const stringKeys = ['maxLength', 'minLength', 'pattern', 'format'];
+                        'properties', 'patternProperties', 'dependencies', 'propertyNames'];
+                    const stringKeys = ['maxLength', 'minLength', 'pattern', 'format', 'customError'];
                     const filterKeys = {
                         'array': [...numberKeys, ...objectKeys, ...stringKeys],
                         'integer': [...arrayKeys, ...objectKeys, ...stringKeys],

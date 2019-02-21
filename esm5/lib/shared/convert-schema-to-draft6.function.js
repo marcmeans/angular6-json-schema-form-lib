@@ -243,8 +243,8 @@ export function convertSchemaToDraft6(schema, options) {
                     var arrayKeys = ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems', 'contains'];
                     var numberKeys = ['multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'];
                     var objectKeys = ['maxProperties', 'minProperties', 'required', 'additionalProperties',
-                        'properties', 'patternProperties', 'dependencies', 'propertyNames', 'customError'];
-                    var stringKeys = ['maxLength', 'minLength', 'pattern', 'format'];
+                        'properties', 'patternProperties', 'dependencies', 'propertyNames'];
+                    var stringKeys = ['maxLength', 'minLength', 'pattern', 'format', 'customError'];
                     var filterKeys_1 = {
                         'array': tslib_1.__spread(numberKeys, objectKeys, stringKeys),
                         'integer': tslib_1.__spread(arrayKeys, objectKeys, stringKeys),

@@ -4024,19 +4024,18 @@ var JsonValidators = /** @class */ (function () {
      * Shows a custom message if a message passed in.
      *
      * // {string} errorMessage - custom error message
-     * // {boolean = false} invert - instead return error object only if valid
      * // {IValidatorFn}
      */
     JsonValidators.customError = function (errorMessage) {
-        var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
-        if (message === null) {
+        errorMessage = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+        if (errorMessage === null) {
             return JsonValidators.nullValidator;
         }
-        return function (control, invert) {
+        return function (invert) {
             if (invert === void 0) { invert = false; }
             var isValid = false;
             return xor(isValid, invert) ?
-                null : { 'customError': { errorMessage: message } };
+                null : { 'customError': { errorMessage: errorMessage } };
         };
     };
     /**
@@ -6850,8 +6849,8 @@ function convertSchemaToDraft6(schema, options) {
                     var arrayKeys = ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems', 'contains'];
                     var numberKeys = ['multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'];
                     var objectKeys = ['maxProperties', 'minProperties', 'required', 'additionalProperties',
-                        'properties', 'patternProperties', 'dependencies', 'propertyNames', 'customError'];
-                    var stringKeys = ['maxLength', 'minLength', 'pattern', 'format'];
+                        'properties', 'patternProperties', 'dependencies', 'propertyNames'];
+                    var stringKeys = ['maxLength', 'minLength', 'pattern', 'format', 'customError'];
                     var filterKeys_1 = {
                         'array': __spread(numberKeys, objectKeys, stringKeys),
                         'integer': __spread(arrayKeys, objectKeys, stringKeys),

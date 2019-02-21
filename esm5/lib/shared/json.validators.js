@@ -683,19 +683,18 @@ var JsonValidators = /** @class */ (function () {
      * Shows a custom message if a message passed in.
      *
      * // {string} errorMessage - custom error message
-     * // {boolean = false} invert - instead return error object only if valid
      * // {IValidatorFn}
      */
     JsonValidators.customError = function (errorMessage) {
-        var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
-        if (message === null) {
+        errorMessage = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+        if (errorMessage === null) {
             return JsonValidators.nullValidator;
         }
-        return function (control, invert) {
+        return function (invert) {
             if (invert === void 0) { invert = false; }
             var isValid = false;
             return xor(isValid, invert) ?
-                null : { 'customError': { errorMessage: message } };
+                null : { 'customError': { errorMessage: errorMessage } };
         };
     };
     /**

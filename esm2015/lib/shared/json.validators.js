@@ -641,18 +641,17 @@ export class JsonValidators {
      * Shows a custom message if a message passed in.
      *
      * // {string} errorMessage - custom error message
-     * // {boolean = false} invert - instead return error object only if valid
      * // {IValidatorFn}
      */
     static customError (errorMessage = null) {
-        var message = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
-        if (message === null) {
+        errorMessage = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
+        if (errorMessage === null) {
             return JsonValidators.nullValidator;
         }
-        return (control, invert = false) => {
+        return (invert = false) => {
             const isValid = false;
             return xor(isValid, invert) ?
-                null : { 'customError': { message } };
+                null : { 'customError': { errorMessage } };
         };
     };
     /**
