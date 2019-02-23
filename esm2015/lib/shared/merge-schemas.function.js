@@ -305,7 +305,6 @@ export function mergeSchemas(...schemas) {
                             return { allOf: [...schemas] };
                         }
                         break;
-                    case 'customError':
                     case '$schema':
                     case '$id':
                     case 'id':
@@ -335,6 +334,7 @@ export function mergeSchemas(...schemas) {
                         // Set true if either true
                         combinedSchema.uniqueItems = !!combinedValue || !!schemaValue;
                         break;
+                    case 'customError':
                     default:
                         return { allOf: [...schemas] };
                 }

@@ -557,7 +557,7 @@ export function getControlValidators(schema) {
     if (hasOwn(schema, 'type')) {
         switch (schema.type) {
             case 'string':
-                forEach(['pattern', 'format', 'minLength', 'maxLength'], function (prop) {
+                forEach(['pattern', 'format', 'minLength', 'maxLength', 'customError'], function (prop) {
                     if (hasOwn(schema, prop)) {
                         validators[prop] = [schema[prop]];
                     }

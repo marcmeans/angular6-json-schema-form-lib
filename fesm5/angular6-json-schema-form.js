@@ -2277,9 +2277,9 @@ function mergeSchemas() {
                             if (isObject(combinedValue) && isObject(schemaValue)) {
                                 var notAnyOf = [combinedValue, schemaValue]
                                     .reduce(function (notAnyOfArray, notSchema) {
-                                    return isArray(notSchema.anyOf) &&
-                                        Object.keys(notSchema).length === 1 ? __spread(notAnyOfArray, notSchema.anyOf) : __spread(notAnyOfArray, [notSchema]);
-                                }, []);
+                                        return isArray(notSchema.anyOf) &&
+                                            Object.keys(notSchema).length === 1 ? __spread(notAnyOfArray, notSchema.anyOf) : __spread(notAnyOfArray, [notSchema]);
+                                    }, []);
                                 // TODO: Remove duplicate items from array
                                 combinedSchema.not = { anyOf: notAnyOf };
                             }
@@ -2334,13 +2334,13 @@ function mergeSchemas() {
                                     Object.keys(combinedValue)
                                         .filter(function (combinedKey) { return !Object.keys(schemaValue).includes(combinedKey); })
                                         .forEach(function (nonMatchingKey) {
-                                        if (schemaValue.additionalProperties === false) {
-                                            delete combinedObject_1[nonMatchingKey];
-                                        }
-                                        else if (isObject(schemaValue.additionalProperties)) {
-                                            combinedObject_1[nonMatchingKey] = mergeSchemas(combinedObject_1[nonMatchingKey], schemaValue.additionalProperties);
-                                        }
-                                    });
+                                            if (schemaValue.additionalProperties === false) {
+                                                delete combinedObject_1[nonMatchingKey];
+                                            }
+                                            else if (isObject(schemaValue.additionalProperties)) {
+                                                combinedObject_1[nonMatchingKey] = mergeSchemas(combinedObject_1[nonMatchingKey], schemaValue.additionalProperties);
+                                            }
+                                        });
                                 }
                                 try {
                                     for (var _l = __values(Object.keys(schemaValue)), _m = _l.next(); !_m.done; _m = _l.next()) {
@@ -2398,7 +2398,6 @@ function mergeSchemas() {
                                 return { value: { allOf: __spread(schemas) } };
                             }
                             break;
-                        case 'customError':
                         case '$schema':
                         case '$id':
                         case 'id':
@@ -2428,6 +2427,7 @@ function mergeSchemas() {
                             // Set true if either true
                             combinedSchema.uniqueItems = !!combinedValue || !!schemaValue;
                             break;
+                        case 'customError':
                         default: return { value: { allOf: __spread(schemas) } };
                     }
                 }
@@ -2897,18 +2897,18 @@ function updateInputOptions(layoutNode, schema, jsf) {
     var fixUiKeys = function (key) { return key.slice(0, 3).toLowerCase() === 'ui:' ? key.slice(3) : key; };
     mergeFilteredObject(newOptions, jsf.formOptions.defautWidgetOptions, [], fixUiKeys);
     [[JsonPointer.get(schema, '/ui:widget/options'), []],
-        [JsonPointer.get(schema, '/ui:widget'), []],
-        [schema, [
-                'additionalProperties', 'additionalItems', 'properties', 'items',
-                'required', 'type', 'x-schema-form', '$ref'
-            ]],
-        [JsonPointer.get(schema, '/x-schema-form/options'), []],
-        [JsonPointer.get(schema, '/x-schema-form'), ['items', 'options']],
-        [layoutNode, [
-                '_id', '$ref', 'arrayItem', 'arrayItemType', 'dataPointer', 'dataType',
-                'items', 'key', 'name', 'options', 'recursiveReference', 'type', 'widget'
-            ]],
-        [layoutNode.options, []],
+    [JsonPointer.get(schema, '/ui:widget'), []],
+    [schema, [
+        'additionalProperties', 'additionalItems', 'properties', 'items',
+        'required', 'type', 'x-schema-form', '$ref'
+    ]],
+    [JsonPointer.get(schema, '/x-schema-form/options'), []],
+    [JsonPointer.get(schema, '/x-schema-form'), ['items', 'options']],
+    [layoutNode, [
+        '_id', '$ref', 'arrayItem', 'arrayItemType', 'dataPointer', 'dataType',
+        'items', 'key', 'name', 'options', 'recursiveReference', 'type', 'widget'
+    ]],
+    [layoutNode.options, []],
     ].forEach(function (_a) {
         var _b = __read(_a, 2), object = _b[0], excludeKeys = _b[1];
         return mergeFilteredObject(newOptions, object, excludeKeys, fixUiKeys);
@@ -2990,7 +2990,7 @@ function getTitleMapFromOneOf(schema, flatList, validateOnly) {
             });
             // If flatList === true or at least one group has multiple items, use grouped map
             if (flatList === true || newTitleMap_1.some(function (title, index) { return index &&
-                hasOwn(title, 'group') && title.group === newTitleMap_1[index - 1].group; })) {
+                    hasOwn(title, 'group') && title.group === newTitleMap_1[index - 1].group; })) {
                 titleMap = newTitleMap_1;
             }
         }
@@ -3004,6 +3004,7 @@ function getTitleMapFromOneOf(schema, flatList, validateOnly) {
  * // { validators }
  */
 function getControlValidators(schema) {
+    console.log('getting validators')
     if (!isObject(schema)) {
         return null;
     }
@@ -3011,7 +3012,7 @@ function getControlValidators(schema) {
     if (hasOwn(schema, 'type')) {
         switch (schema.type) {
             case 'string':
-                forEach(['pattern', 'format', 'minLength', 'maxLength'], function (prop) {
+                forEach(['pattern', 'format', 'minLength', 'maxLength', 'customError'], function (prop) {
                     if (hasOwn(schema, prop)) {
                         validators[prop] = [schema[prop]];
                     }
@@ -3096,16 +3097,16 @@ function resolveSchemaReferences(schema, schemaRefLibrary, schemaRecursiveRefMap
             var _b = __read(_a, 2), fromRef1 = _b[0], toRef1 = _b[1];
             return Array.from(refMap)
                 .filter(function (_a) {
-                var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
-                return JsonPointer.isSubPointer(toRef1, fromRef2, true) &&
-                    !JsonPointer.isSubPointer(toRef2, toRef1, true) &&
-                    !refMapSet.has(fromRef1 + fromRef2.slice(toRef1.length) + '~~' + toRef2);
-            })
+                    var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
+                    return JsonPointer.isSubPointer(toRef1, fromRef2, true) &&
+                        !JsonPointer.isSubPointer(toRef2, toRef1, true) &&
+                        !refMapSet.has(fromRef1 + fromRef2.slice(toRef1.length) + '~~' + toRef2);
+                })
                 .forEach(function (_a) {
-                var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
-                refMapSet.add(fromRef1 + fromRef2.slice(toRef1.length) + '~~' + toRef2);
-                checkRefLinks = true;
-            });
+                    var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
+                    refMapSet.add(fromRef1 + fromRef2.slice(toRef1.length) + '~~' + toRef2);
+                    checkRefLinks = true;
+                });
         });
     }
     // Build full recursiveRefMap
@@ -3113,34 +3114,34 @@ function resolveSchemaReferences(schema, schemaRefLibrary, schemaRecursiveRefMap
     Array.from(refMapSet)
         .map(function (refLink) { return refLink.split('~~'); })
         .filter(function (_a) {
-        var _b = __read(_a, 2), fromRef = _b[0], toRef = _b[1];
-        return JsonPointer.isSubPointer(toRef, fromRef);
-    })
+            var _b = __read(_a, 2), fromRef = _b[0], toRef = _b[1];
+            return JsonPointer.isSubPointer(toRef, fromRef);
+        })
         .forEach(function (_a) {
-        var _b = __read(_a, 2), fromRef = _b[0], toRef = _b[1];
-        return recursiveRefMap.set(fromRef, toRef);
-    });
+            var _b = __read(_a, 2), fromRef = _b[0], toRef = _b[1];
+            return recursiveRefMap.set(fromRef, toRef);
+        });
     // Second pass - create recursive versions of any other refs that link to recursive refs
     Array.from(refMap)
         .filter(function (_a) {
-        var _b = __read(_a, 2), fromRef1 = _b[0], toRef1 = _b[1];
-        return Array.from(recursiveRefMap.keys())
-            .every(function (fromRef2) { return !JsonPointer.isSubPointer(fromRef1, fromRef2, true); });
-    })
-        .forEach(function (_a) {
-        var _b = __read(_a, 2), fromRef1 = _b[0], toRef1 = _b[1];
-        return Array.from(recursiveRefMap)
-            .filter(function (_a) {
-            var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
-            return !recursiveRefMap.has(fromRef1 + fromRef2.slice(toRef1.length)) &&
-                JsonPointer.isSubPointer(toRef1, fromRef2, true) &&
-                !JsonPointer.isSubPointer(toRef1, fromRef1, true);
+            var _b = __read(_a, 2), fromRef1 = _b[0], toRef1 = _b[1];
+            return Array.from(recursiveRefMap.keys())
+                .every(function (fromRef2) { return !JsonPointer.isSubPointer(fromRef1, fromRef2, true); });
         })
-            .forEach(function (_a) {
-            var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
-            return recursiveRefMap.set(fromRef1 + fromRef2.slice(toRef1.length), fromRef1 + toRef2.slice(toRef1.length));
+        .forEach(function (_a) {
+            var _b = __read(_a, 2), fromRef1 = _b[0], toRef1 = _b[1];
+            return Array.from(recursiveRefMap)
+                .filter(function (_a) {
+                    var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
+                    return !recursiveRefMap.has(fromRef1 + fromRef2.slice(toRef1.length)) &&
+                        JsonPointer.isSubPointer(toRef1, fromRef2, true) &&
+                        !JsonPointer.isSubPointer(toRef1, fromRef1, true);
+                })
+                .forEach(function (_a) {
+                    var _b = __read(_a, 2), fromRef2 = _b[0], toRef2 = _b[1];
+                    return recursiveRefMap.set(fromRef1 + fromRef2.slice(toRef1.length), fromRef1 + toRef2.slice(toRef1.length));
+                });
         });
-    });
     // Create compiled schema by replacing all non-recursive $ref links with
     // thieir linked schemas and, where possible, combining schemas in allOf arrays.
     var compiledSchema = __assign({}, schema);
@@ -3506,8 +3507,8 @@ var JsonValidators = /** @class */ (function () {
             };
             var isValid = isArray(currentValue) ?
                 currentValue.every(function (inputValue) { return allowedValues.some(function (enumValue) {
-                    return isEqual(enumValue, inputValue);
-                }); }) :
+                        return isEqual(enumValue, inputValue);
+                    }); }) :
                 allowedValues.some(function (enumValue) { return isEqual(enumValue, currentValue); });
             return xor(isValid, invert) ?
                 null : { 'enum': { allowedValues: allowedValues, currentValue: currentValue } };
@@ -3540,7 +3541,7 @@ var JsonValidators = /** @class */ (function () {
                 return constValue === inputValue ||
                     isNumber(constValue) && +inputValue === +constValue ||
                     isBoolean(constValue, 'strict') &&
-                        toJavaScriptType(inputValue, 'boolean') === constValue ||
+                    toJavaScriptType(inputValue, 'boolean') === constValue ||
                     constValue === null && !hasValue(inputValue);
             };
             var isValid = isEqual(requiredValue, currentValue);
@@ -4027,15 +4028,16 @@ var JsonValidators = /** @class */ (function () {
      * // {IValidatorFn}
      */
     JsonValidators.customError = function (errorMessage) {
+        console.log(errorMessage);
         errorMessage = typeof errorMessage != 'undefined' && errorMessage ? errorMessage : null;
         if (errorMessage === null) {
             return JsonValidators.nullValidator;
         }
         return function (invert) {
-            if (invert === void 0) { invert = false; }
+            // if (invert === void 0) { invert = false; }
             var isValid = false;
-            return xor(isValid, invert) ?
-                null : { 'customError': { errorMessage: errorMessage } };
+            // return xor(isValid, invert) ? null : { 'customError': { errorMessage: errorMessage } };
+            return { 'customError': { errorMessage: errorMessage } };
         };
     };
     /**
@@ -4287,9 +4289,9 @@ var JsonValidators = /** @class */ (function () {
         if (!control) {
             return JsonValidators.nullValidator;
         }
-        var EMAIL_REGEXP = 
-        // tslint:disable-next-line:max-line-length
-        /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
+        var EMAIL_REGEXP =
+            // tslint:disable-next-line:max-line-length
+            /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
         return EMAIL_REGEXP.test(control.value) ? null : { 'email': true };
     };
     return JsonValidators;
@@ -4733,13 +4735,13 @@ function buildLayout(jsf, widgetLibrary) {
             Object.assign(newNode, layoutItem);
             Object.keys(newNode)
                 .filter(function (option) { return !inArray(option, [
-                '_id', '$ref', 'arrayItem', 'arrayItemType', 'dataPointer', 'dataType',
-                'items', 'key', 'name', 'options', 'recursiveReference', 'type', 'widget'
-            ]); })
+                        '_id', '$ref', 'arrayItem', 'arrayItemType', 'dataPointer', 'dataType',
+                        'items', 'key', 'name', 'options', 'recursiveReference', 'type', 'widget'
+                    ]); })
                 .forEach(function (option) {
-                newNode.options[option] = newNode[option];
-                delete newNode[option];
-            });
+                    newNode.options[option] = newNode[option];
+                    delete newNode[option];
+                });
             if (!hasOwn(newNode, 'type') && isString(newNode.widget)) {
                 newNode.type = newNode.widget;
                 delete newNode.widget;
@@ -4783,8 +4785,9 @@ function buildLayout(jsf, widgetLibrary) {
                                                                                     code === '400' ? 'minItems' :
                                                                                         code === '401' ? 'maxItems' :
                                                                                             code === '402' ? 'uniqueItems' :
-                                                                                                code === '403' ? 'customError' :
-                                                                                                    code === '500' ? 'format' : code + '';
+                                                                                                code === '500' ? 'format' : 
+                                                                                                    code === '502' ? 'customError' :
+                                                                                                        code + '';
                             newNode.options.validationMessages[newKey] = newNode.options.validationMessage[key];
                         });
                     }
@@ -5250,17 +5253,17 @@ function buildLayoutFromSchema(jsf, widgetLibrary, nodeValue, schemaPointer, dat
                 .filter(function (key) { return hasOwn(schema.properties, key) ||
                 hasOwn(schema, 'additionalProperties'); })
                 .forEach(function (key) {
-                var keySchemaPointer = hasOwn(schema.properties, key) ?
-                    '/properties/' + key : '/additionalProperties';
-                var innerItem = buildLayoutFromSchema(jsf, widgetLibrary, isObject(nodeValue) ? nodeValue[key] : null, schemaPointer + keySchemaPointer, dataPointer + '/' + key, false, null, null, forRefLibrary, dataPointerPrefix);
-                if (innerItem) {
-                    if (isInputRequired(schema, '/' + key)) {
-                        innerItem.options.required = true;
-                        jsf.fieldsRequired = true;
+                    var keySchemaPointer = hasOwn(schema.properties, key) ?
+                        '/properties/' + key : '/additionalProperties';
+                    var innerItem = buildLayoutFromSchema(jsf, widgetLibrary, isObject(nodeValue) ? nodeValue[key] : null, schemaPointer + keySchemaPointer, dataPointer + '/' + key, false, null, null, forRefLibrary, dataPointerPrefix);
+                    if (innerItem) {
+                        if (isInputRequired(schema, '/' + key)) {
+                            innerItem.options.required = true;
+                            jsf.fieldsRequired = true;
+                        }
+                        newSection_1.push(innerItem);
                     }
-                    newSection_1.push(innerItem);
-                }
-            });
+                });
             if (dataPointer === '' && !forRefLibrary) {
                 newNode = newSection_1;
             }
@@ -6173,9 +6176,9 @@ var JsonSchemaFormService = /** @class */ (function () {
             ['ErrorState', 'SuccessState']
                 .filter(function (suffix) { return hasOwn(globalDefaults_1, 'disable' + suffix); })
                 .forEach(function (suffix) {
-                globalDefaults_1['enable' + suffix] = !globalDefaults_1['disable' + suffix];
-                delete globalDefaults_1['disable' + suffix];
-            });
+                    globalDefaults_1['enable' + suffix] = !globalDefaults_1['disable' + suffix];
+                    delete globalDefaults_1['disable' + suffix];
+                });
         }
     };
     JsonSchemaFormService.prototype.compileAjvSchema = function () {
@@ -6294,11 +6297,11 @@ var JsonSchemaFormService = /** @class */ (function () {
             [parentNode, '/options/title'],
             [parentNode, '/options/legend'],
         ] : [
-            [childNode, '/options/title'],
-            [childNode, '/options/legend'],
-            [parentNode, '/options/title'],
-            [parentNode, '/options/legend']
-        ]);
+                [childNode, '/options/title'],
+                [childNode, '/options/legend'],
+                [parentNode, '/options/title'],
+                [parentNode, '/options/legend']
+            ]);
         if (!text) {
             return text;
         }
@@ -6391,34 +6394,34 @@ var JsonSchemaFormService = /** @class */ (function () {
             validationMessages = {};
         }
         var addSpaces = function (string) { return string[0].toUpperCase() + (string.slice(1) || '')
-            .replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' '); };
+                .replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' '); };
         var formatError = function (error) { return typeof error === 'object' ?
-            Object.keys(error).map(function (key) {
-                return error[key] === true ? addSpaces(key) :
-                    error[key] === false ? 'Not ' + addSpaces(key) :
-                        addSpaces(key) + ': ' + formatError(error[key]);
-            }).join(', ') :
-            addSpaces(error.toString()); };
+                Object.keys(error).map(function (key) {
+                    return error[key] === true ? addSpaces(key) :
+                        error[key] === false ? 'Not ' + addSpaces(key) :
+                            addSpaces(key) + ': ' + formatError(error[key]);
+                }).join(', ') :
+                addSpaces(error.toString()); };
         return Object.keys(errors)
             // Hide 'required' error, unless it is the only one
             .filter(function (errorKey) { return errorKey !== 'required' || Object.keys(errors).length === 1; })
             .map(function (errorKey) {
-            // If validationMessages is a string, return it
-            return typeof validationMessages === 'string' ? validationMessages :
-                // If custom error message is a function, return function result
-                typeof validationMessages[errorKey] === 'function' ?
-                    validationMessages[errorKey](errors[errorKey]) :
-                    // If custom error message is a string, replace placeholders and return
-                    typeof validationMessages[errorKey] === 'string' ?
-                        // Does error message have any {{property}} placeholders?
-                        !/{{.+?}}/.test(validationMessages[errorKey]) ?
-                            validationMessages[errorKey] :
-                            // Replace {{property}} placeholders with values
-                            Object.keys(errors[errorKey])
-                                .reduce(function (errorMessage, errorProperty) { return errorMessage.replace(new RegExp('{{' + errorProperty + '}}', 'g'), errors[errorKey][errorProperty]); }, validationMessages[errorKey]) :
-                        // If no custom error message, return formatted error data instead
-                        addSpaces(errorKey) + ' Error: ' + formatError(errors[errorKey]);
-        }).join('<br>');
+                // If validationMessages is a string, return it
+                return typeof validationMessages === 'string' ? validationMessages :
+                    // If custom error message is a function, return function result
+                    typeof validationMessages[errorKey] === 'function' ?
+                        validationMessages[errorKey](errors[errorKey]) :
+                        // If custom error message is a string, replace placeholders and return
+                        typeof validationMessages[errorKey] === 'string' ?
+                            // Does error message have any {{property}} placeholders?
+                            !/{{.+?}}/.test(validationMessages[errorKey]) ?
+                                validationMessages[errorKey] :
+                                // Replace {{property}} placeholders with values
+                                Object.keys(errors[errorKey])
+                                    .reduce(function (errorMessage, errorProperty) { return errorMessage.replace(new RegExp('{{' + errorProperty + '}}', 'g'), errors[errorKey][errorProperty]); }, validationMessages[errorKey]) :
+                            // If no custom error message, return formatted error data instead
+                            addSpaces(errorKey) + ' Error: ' + formatError(errors[errorKey]);
+            }).join('<br>');
     };
     JsonSchemaFormService.prototype.updateValue = function (ctx, value) {
         var e_2, _a;
@@ -6762,8 +6765,8 @@ function convertSchemaToDraft6(schema, options) {
             Object.keys(properties_1)
                 .filter(function (key) { return properties_1[key].requires; })
                 .forEach(function (key) { return dependencies_1[key] =
-                typeof properties_1[key].requires === 'string' ?
-                    [properties_1[key].requires] : properties_1[key].requires; });
+                        typeof properties_1[key].requires === 'string' ?
+                            [properties_1[key].requires] : properties_1[key].requires; });
             newSchema.dependencies = dependencies_1;
             changed = true;
             if (!draft) {
@@ -6864,7 +6867,7 @@ function convertSchemaToDraft6(schema, options) {
                         var newType = typeof type === 'string' ? { type: type } : __assign({}, type);
                         Object.keys(newSchema)
                             .filter(function (key) { return !newType.hasOwnProperty(key) &&
-                            !__spread((filterKeys_1[newType.type] || filterKeys_1.all), ['type', 'default']).includes(key); })
+                                    !__spread((filterKeys_1[newType.type] || filterKeys_1.all), ['type', 'default']).includes(key); })
                             .forEach(function (key) { return newType[key] = newSchema[key]; });
                         anyOf.push(newType);
                     };
@@ -6900,21 +6903,21 @@ function convertSchemaToDraft6(schema, options) {
     Object.keys(newSchema)
         .filter(function (key) { return typeof newSchema[key] === 'object'; })
         .forEach(function (key) {
-        if (['definitions', 'dependencies', 'properties', 'patternProperties']
-            .includes(key) && typeof newSchema[key].map !== 'function') {
-            var newKey_1 = {};
-            Object.keys(newSchema[key]).forEach(function (subKey) { return newKey_1[subKey] =
-                convertSchemaToDraft6(newSchema[key][subKey], { changed: changed, draft: draft }); });
-            newSchema[key] = newKey_1;
-        }
-        else if (['items', 'additionalItems', 'additionalProperties',
-            'allOf', 'anyOf', 'oneOf', 'not'].includes(key)) {
-            newSchema[key] = convertSchemaToDraft6(newSchema[key], { changed: changed, draft: draft });
-        }
-        else {
-            newSchema[key] = _.cloneDeep(newSchema[key]);
-        }
-    });
+            if (['definitions', 'dependencies', 'properties', 'patternProperties']
+                .includes(key) && typeof newSchema[key].map !== 'function') {
+                var newKey_1 = {};
+                Object.keys(newSchema[key]).forEach(function (subKey) { return newKey_1[subKey] =
+                        convertSchemaToDraft6(newSchema[key][subKey], { changed: changed, draft: draft }); });
+                newSchema[key] = newKey_1;
+            }
+            else if (['items', 'additionalItems', 'additionalProperties',
+                'allOf', 'anyOf', 'oneOf', 'not'].includes(key)) {
+                newSchema[key] = convertSchemaToDraft6(newSchema[key], { changed: changed, draft: draft });
+            }
+            else {
+                newSchema[key] = _.cloneDeep(newSchema[key]);
+            }
+        });
     return newSchema;
 }
 
@@ -9948,9 +9951,9 @@ var MaterialDesignFrameworkComponent = /** @class */ (function () {
                 if (this.parentArray) {
                     this.isOrderable =
                         this.parentArray.type.slice(0, 3) !== 'tab' &&
-                            this.layoutNode.arrayItemType === 'list' &&
-                            !this.widgetOptions.readonly &&
-                            this.parentArray.options.orderable;
+                        this.layoutNode.arrayItemType === 'list' &&
+                        !this.widgetOptions.readonly &&
+                        this.parentArray.options.orderable;
                 }
             }
             this.frameworkInitialized = true;
@@ -10502,8 +10505,8 @@ var MaterialDesignFrameworkModule = /** @class */ (function () {
             imports: __spread([
                 CommonModule, FormsModule, ReactiveFormsModule, FlexLayoutModule
             ], ANGULAR_MATERIAL_MODULES, [
-                WidgetLibraryModule, JsonSchemaFormModule
-            ]),
+                    WidgetLibraryModule, JsonSchemaFormModule
+                ]),
             declarations: __spread(MATERIAL_FRAMEWORK_COMPONENTS),
             exports: __spread([JsonSchemaFormModule], MATERIAL_FRAMEWORK_COMPONENTS),
             providers: [JsonSchemaFormService, FrameworkLibraryService, WidgetLibraryService,

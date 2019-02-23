@@ -357,7 +357,6 @@ export function mergeSchemas() {
                                 return { value: { allOf: tslib_1.__spread(schemas) } };
                             }
                             break;
-                        case 'customError':
                         case '$schema':
                         case '$id':
                         case 'id':
@@ -387,6 +386,7 @@ export function mergeSchemas() {
                             // Set true if either true
                             combinedSchema.uniqueItems = !!combinedValue || !!schemaValue;
                             break;
+                        case 'customError':
                         default: return { value: { allOf: tslib_1.__spread(schemas) } };
                     }
                 }

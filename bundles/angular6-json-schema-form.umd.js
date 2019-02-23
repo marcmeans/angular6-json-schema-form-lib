@@ -2696,7 +2696,6 @@
                                     return { value: { allOf: __spread(schemas) } };
                                 }
                                 break;
-                            case 'customError':
                             case '$schema':
                             case '$id':
                             case 'id':
@@ -2726,6 +2725,7 @@
                                 // Set true if either true
                                 combinedSchema.uniqueItems = !!combinedValue || !!schemaValue;
                                 break;
+                            case 'customError':
                             default: return { value: { allOf: __spread(schemas) } };
                         }
                     }
@@ -3347,7 +3347,7 @@
         if (hasOwn(schema, 'type')) {
             switch (schema.type) {
                 case 'string':
-                    forEach(['pattern', 'format', 'minLength', 'maxLength'], function (prop) {
+                    forEach(['pattern', 'format', 'minLength', 'maxLength', 'customError'], function (prop) {
                         if (hasOwn(schema, prop)) {
                             validators[prop] = [schema[prop]];
                         }
@@ -5217,8 +5217,9 @@
                                                                                         code === '400' ? 'minItems' :
                                                                                             code === '401' ? 'maxItems' :
                                                                                                 code === '402' ? 'uniqueItems' :
-                                                                                                    code === '403' ? 'customError' :
-                                                                                                        code === '500' ? 'format' : code + '';
+                                                                                                    code === '500' ? 'format' : 
+                                                                                                        code === '502' ? 'customError' :
+                                                                                                            code + '';
                                 newNode.options.validationMessages[newKey] = newNode.options.validationMessage[key];
                             });
                         }

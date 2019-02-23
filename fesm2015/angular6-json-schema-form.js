@@ -2125,7 +2125,6 @@ function mergeSchemas(...schemas) {
                             return { allOf: [...schemas] };
                         }
                         break;
-                    case 'customError':
                     case '$schema':
                     case '$id':
                     case 'id':
@@ -2155,6 +2154,7 @@ function mergeSchemas(...schemas) {
                         // Set true if either true
                         combinedSchema.uniqueItems = !!combinedValue || !!schemaValue;
                         break;
+                    case 'customError':
                     default:
                         return { allOf: [...schemas] };
                 }
@@ -2691,7 +2691,7 @@ function getControlValidators(schema) {
     if (hasOwn(schema, 'type')) {
         switch (schema.type) {
             case 'string':
-                forEach(['pattern', 'format', 'minLength', 'maxLength'], (prop) => {
+                forEach(['pattern', 'format', 'minLength', 'maxLength', 'customError'], (prop) => {
                     if (hasOwn(schema, prop)) {
                         validators[prop] = [schema[prop]];
                     }
@@ -4362,8 +4362,9 @@ function buildLayout(jsf, widgetLibrary) {
                                                                                     code === '400' ? 'minItems' :
                                                                                         code === '401' ? 'maxItems' :
                                                                                             code === '402' ? 'uniqueItems' :
-                                                                                                code === '403' ? 'customError' :
-                                                                                                    code === '500' ? 'format' : code + '';
+                                                                                                code === '500' ? 'format' : 
+                                                                                                    code === '502' ? 'customError' :
+                                                                                                        code + '';
                             newNode.options.validationMessages[newKey] = newNode.options.validationMessage[key];
                         });
                     }
